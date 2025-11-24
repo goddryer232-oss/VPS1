@@ -27,7 +27,7 @@ jobs:
 
     - name: Configure Ngrok AuthToken
       env:
-        NGROK_TOKEN: ${{ 35v2bw5Lf4kNRHpt6dHdfrEcDX2_63eLvR2BJUBcsYiptSazJ}}
+        NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
       run: |
         ./ngrok authtoken $NGROK_TOKEN
 
