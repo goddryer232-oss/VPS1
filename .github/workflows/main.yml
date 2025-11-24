@@ -1,0 +1,44 @@
+name: Start VPS with Ngrok
+
+on:
+  workflow_dispatch: # รันด้วยมือ
+  push:
+    branches:
+      - main
+
+jobs:
+  start-vps:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y unzip wget python3 python3-pip openssh-server
+
+    - name: Download Ngrok
+      run: |
+        wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        unzip ngrok-stable-linux-amd64.zip
+        chmod +x ngrok
+
+    - name: Configure Ngrok AuthToken
+      env:
+        NGROK_TOKEN: ${{ 35v2bw5Lf4kNRHpt6dHdfrEcDX2_63eLvR2BJUBcsYiptSazJ}}
+      run: |
+        ./ngrok authtoken $NGROK_TOKEN
+
+    - name: Start SSH server
+      run: |
+        sudo service ssh start
+        echo "user:password" | sudo chpasswd
+
+    - name: Start Ngrok tunnel
+      run: |
+        nohup ./ngrok tcp 22 &
+
+    - name: Show Ngrok tunnels
+      run: curl -s http://localhost:4040/api/tunnels
